@@ -9,14 +9,36 @@
 <body>
 <main>
 <p class="belka"><a href="index.html">Kontekst AI</a></p>
-<h1>Logowanie TikTok</h1>
-<p>Jeśli widzisz kod poniżej, logowanie się udało. Skopiuj go i wklej tam, gdzie prosi o niego workflow.</p>
-<p><code id="kod">brak kodu w adresie</code></p>
+<h1>Połącz konto TikTok</h1>
+<p>Kontekst AI wysyła gotowe shorty kanału jako szkice do skrzynki TikTok. Zakresy: <code>user.info.basic</code> (nazwa i awatar konta) i <code>video.upload</code> (szkic do skrzynki). Opis i publikację zatwierdzasz w aplikacji TikTok.</p>
+<p><label>Client key aplikacji<br><input id="klucz" style="width:100%;max-width:420px;padding:8px;background:#1C1D18;color:#E8E8E2;border:1px solid #2A2B25;border-radius:6px"></label></p>
+<p><a id="zaloguj" class="belka" href="#" style="text-decoration:none">Zaloguj przez TikTok</a></p>
+<div id="wynik" hidden>
+<h2>Konto połączone</h2>
+<p>Kod autoryzacji (ważny kilka minut). Wklej go w GitHub Actions → workflow „Social” → pole <code>tiktok_kod</code>:</p>
+<p><code id="kod"></code> <button id="kopiuj">Kopiuj</button></p>
+</div>
 <p class="meta" id="blad"></p>
 <script>
+const REDIRECT = location.origin + location.pathname;
 const q = new URLSearchParams(location.search);
-if (q.get('code')) document.getElementById('kod').textContent = q.get('code');
+const pole = document.getElementById('klucz');
+try { pole.value = q.get('klucz') || localStorage.getItem('tt_klucz') || ''; } catch (e) {}
+document.getElementById('zaloguj').onclick = ev => {
+  ev.preventDefault();
+  const key = pole.value.trim(); if (!key) { document.getElementById('blad').textContent = 'Wpisz client key.'; return; }
+  const state = Math.random().toString(36).slice(2);
+  try { localStorage.setItem('tt_klucz', key); sessionStorage.setItem('tt_state', state); } catch (e) {}
+  location.href = 'https://www.tiktok.com/v2/auth/authorize/?' + new URLSearchParams({
+    client_key: key, scope: 'user.info.basic,video.upload', response_type: 'code', redirect_uri: REDIRECT, state });
+};
+if (q.get('code')) {
+  let ok = true; try { const s = sessionStorage.getItem('tt_state'); ok = !s || s === q.get('state'); } catch (e) {}
+  if (!ok) document.getElementById('blad').textContent = 'Niezgodny parametr state, zaloguj się jeszcze raz.';
+  else { document.getElementById('kod').textContent = q.get('code'); document.getElementById('wynik').hidden = false; }
+}
 if (q.get('error')) document.getElementById('blad').textContent = 'Błąd: ' + q.get('error') + ' ' + (q.get('error_description') || '');
+document.getElementById('kopiuj').onclick = () => navigator.clipboard.writeText(document.getElementById('kod').textContent);
 </script>
 </main>
 </body>
