@@ -1,0 +1,13 @@
+/* kolory z brand.json; fonty bez pobierania z zewnątrz */
+body { margin: 0; background: #0C0D0A; color: #E8E8E2; font: 17px/1.6 Inter, system-ui, -apple-system, "Segoe UI", sans-serif; }
+main { max-width: 720px; margin: 0 auto; padding: 32px 20px 64px; }
+h1, h2, .belka { font-family: "Space Grotesk", system-ui, sans-serif; }
+h1 { font-size: 2rem; line-height: 1.2; margin: 0.4em 0; }
+h2 { font-size: 1.2rem; margin-top: 2em; }
+.belka { display: inline-block; background: #D9FF3F; color: #0C0D0A; font-weight: 700; padding: 4px 12px; border-radius: 999px; margin: 0; }
+.belka a { color: inherit; text-decoration: none; }
+.akcent { color: #D9FF3F; }
+.meta { color: #9A9A92; font-size: 0.9rem; }
+a { color: #D9FF3F; }
+code { background: #1C1D18; padding: 1px 6px; border-radius: 4px; }
+hr { border: 0; border-top: 1px solid #2A2B25; margin: 48px 0; }
